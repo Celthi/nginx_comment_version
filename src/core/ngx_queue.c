@@ -27,17 +27,22 @@ ngx_queue_middle(ngx_queue_t *queue)
 
     next = ngx_queue_head(queue);
 
+    /* 快慢指针法寻找中间节点 */
     for ( ;; ) {
         middle = ngx_queue_next(middle);
 
         next = ngx_queue_next(next);
 
+        /* 假设k个循环时，这里next等于last,那么一共是2k个节点
+         * 而middle走了k个，出发时是从head,所以一共走了k+1个。*/
         if (next == ngx_queue_last(queue)) {
             return middle;
         }
 
         next = ngx_queue_next(next);
 
+        /* 假设k个循环时，这里next等于last，那么一共是2k+1个节点
+         * 而Middle走了k+1个，*/
         if (next == ngx_queue_last(queue)) {
             return middle;
         }
