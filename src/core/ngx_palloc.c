@@ -118,11 +118,15 @@ ngx_reset_pool(ngx_pool_t *pool)
     pool->large = NULL;
 }
 
+/* 从pool里分配size字节的内存 
+ * 地址对齐
+ * */
 
 void *
 ngx_palloc(ngx_pool_t *pool, size_t size)
 {
 #if !(NGX_DEBUG_PALLOC)
+    /* 如果小于等于max则分配小内存 */
     if (size <= pool->max) {
         return ngx_palloc_small(pool, size, 1);
     }
@@ -217,12 +221,15 @@ ngx_palloc_large(ngx_pool_t *pool, size_t size)
     ngx_uint_t         n;
     ngx_pool_large_t  *large;
 
+    /* ngx_alloc直接从操作系统分配size的内存
+     * */
     p = ngx_alloc(size, pool->log);
     if (p == NULL) {
         return NULL;
     }
 
-    n = 0;
+    n = 0; /* 用于计数，如果4次(n++>3)仍未在large的链表里找到可以放入的alloc，
+              则直接分配一个large_t用于插入新分配的内存*/
 
     for (large = pool->large; large; large = large->next) {
         if (large->alloc == NULL) {
@@ -241,6 +248,7 @@ ngx_palloc_large(ngx_pool_t *pool, size_t size)
         return NULL;
     }
 
+    /* 将新构建的large_t结构体直接插入链表的首部 */
     large->alloc = p;
     large->next = pool->large;
     pool->large = large;
