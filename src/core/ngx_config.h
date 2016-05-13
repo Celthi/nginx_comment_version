@@ -78,6 +78,7 @@
 typedef intptr_t        ngx_int_t;
 typedef uintptr_t       ngx_uint_t;
 typedef intptr_t        ngx_flag_t;
+typedef unsigned char u_char
 
 
 #define NGX_INT32_LEN   (sizeof("-2147483648") - 1)
@@ -98,6 +99,9 @@ typedef intptr_t        ngx_flag_t;
 #endif
 
 #define ngx_align(d, a)     (((d) + (a - 1)) & ~(a - 1))
+/* 地址对齐，将指针p变为a的倍数。
+ * 思想是先将p上移，然后再下取到a的倍数
+ * 具体分析见stackoverflow：http://stackoverflow.com/questions/227897/how-to-allocate-aligned-memory-only-using-the-standard-library */
 #define ngx_align_ptr(p, a)                                                   \
     (u_char *) (((uintptr_t) (p) + ((uintptr_t) a - 1)) & ~((uintptr_t) a - 1))
 
