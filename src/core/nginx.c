@@ -273,6 +273,7 @@ main(int argc, char *const *argv)
         return 1;
     }
 
+    /* 这个函数里面根据配置项来加载所有的模块 */
     cycle = ngx_init_cycle(&init_cycle);
     if (cycle == NULL) {
         if (ngx_test_config) {
@@ -364,6 +365,7 @@ main(int argc, char *const *argv)
         ngx_single_process_cycle(cycle);
 
     } else {
+        /* 进入master进程的工作循环 */
         ngx_master_process_cycle(cycle);
     }
 
