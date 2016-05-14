@@ -37,6 +37,7 @@ typedef struct {
 } ngx_variable_value_t;
 
 
+/* 初始化字符串*/
 #define ngx_string(str)     { sizeof(str) - 1, (u_char *) str }
 #define ngx_null_string     { 0, NULL }
 #define ngx_str_set(str, text)                                               \
